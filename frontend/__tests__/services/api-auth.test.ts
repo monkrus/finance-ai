@@ -13,6 +13,9 @@ describe('API Interceptors - Auth', () => {
     useAuthStore.setState({
       user: { id: 1, email: 'test@test.com', role: 'USER', isEmailVerified: true, firstName: 'T', lastName: 'T', createdAt: '' },
       accessToken: 'old-token',
+      // A logged-in user with an expired access token still holds a refresh token;
+      // the interceptor only attempts a refresh when one is present.
+      refreshToken: 'old-refresh-token',
       isAuthenticated: true,
     });
   });

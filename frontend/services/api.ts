@@ -47,7 +47,27 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Never attempt a token refresh for the auth endpoints themselves. A 401 from
+    // /auth/login (wrong password) or /auth/refresh is a genuine auth failure, not
+    // an expired access token — refreshing there fires a needless request, clobbers
+    // the real error, and can log the user out mid-login.
+    const AUTH_PATHS = [
+      '/api/v1/auth/login',
+      '/api/v1/auth/register',
+      '/api/v1/auth/refresh',
+      '/api/v1/auth/logout',
+    ];
+    const isAuthPath = AUTH_PATHS.some((p) => originalRequest.url?.includes(p));
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthPath) {
+      // With no refresh token there is nothing to refresh with. A 401 on a
+      // protected route then means the session is unrecoverable — clear auth
+      // state (so the app redirects to login) and reject.
+      if (!useAuthStore.getState().refreshToken) {
+        useAuthStore.getState().logout();
+        return Promise.reject(error);
+      }
+
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });

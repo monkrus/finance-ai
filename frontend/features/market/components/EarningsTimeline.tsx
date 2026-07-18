@@ -21,8 +21,8 @@ export function EarningsTimeline({ ticker }: { ticker: string }) {
           <div className="flex gap-4 items-end h-full w-full opacity-50">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="flex-1 flex gap-1 items-end h-full">
-                <Skeleton className="w-1/2" style={{ height: `${Math.random() * 60 + 20}%` }} />
-                <Skeleton className="w-1/2 bg-indigo-500/20" style={{ height: `${Math.random() * 60 + 20}%` }} />
+                <Skeleton className="w-1/2" style={{ height: `${20 + ((i * 29) % 60)}%` }} />
+                <Skeleton className="w-1/2 bg-indigo-500/20" style={{ height: `${20 + ((i * 43) % 60)}%` }} />
               </div>
             ))}
           </div>

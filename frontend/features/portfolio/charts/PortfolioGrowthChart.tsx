@@ -23,7 +23,7 @@ export function PortfolioGrowthChart() {
         {isLoading || !data ? (
           <div className="h-full w-full flex items-end space-x-2 p-4">
             {Array.from({length: 12}).map((_, i) => (
-              <Skeleton key={i} className="w-full" style={{ height: `${Math.random() * 80 + 20}%` }} />
+              <Skeleton key={i} className="w-full" style={{ height: `${20 + ((i * 23) % 80)}%` }} />
             ))}
           </div>
         ) : (
