@@ -55,6 +55,22 @@ export interface PriceData {
   volume: number;
 }
 
+export interface Quote {
+  ticker: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  dayLow: number;
+  dayHigh: number;
+  yearLow: number;
+  yearHigh: number;
+  marketCap: number;
+  volume: number;
+  avgVolume: number;
+  exchange: string;
+  timestamp: number;
+}
+
 export interface TechnicalIndicators {
   rsi: number;
   macd: { value: number; signal: number; hist: number };

@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.5.20",
     "@hookform/resolvers": "^5.4.0",
     "@radix-ui/react-dialog": "^1.1.19",
     "@radix-ui/react-label": "^2.1.11",
