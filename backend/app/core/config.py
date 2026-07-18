@@ -25,7 +25,10 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "FinPilot AI"
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development") # development, staging, production
-    
+
+    # Comma-separated list of allowed CORS origins (env-driven for prod/staging).
+    BACKEND_CORS_ORIGINS: str = os.getenv("BACKEND_CORS_ORIGINS", "http://localhost:3000")
+
     # Security
     SECRET_KEY: str = get_mandatory_secret_key()
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15  # 15 minutes for access tokens

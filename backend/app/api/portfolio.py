@@ -105,6 +105,23 @@ async def create_transaction(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@router.get("/{portfolio_id}/holdings", response_model=List[Holding])
+async def get_portfolio_holdings(
+    portfolio_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    engine: PortfolioEngine = Depends(get_portfolio_engine)
+):
+    """Holdings enriched with market data (price, market value, weight, sector)."""
+    result = await db.execute(select(PortfolioModel).filter(
+        PortfolioModel.id == portfolio_id,
+        PortfolioModel.user_id == current_user.id
+    ))
+    if not result.scalars().first():
+        raise HTTPException(status_code=404, detail="Portfolio not found")
+
+    return await engine.get_hydrated_holdings(db, portfolio_id)
+
 @router.get("/{portfolio_id}/analytics", response_model=PortfolioAnalytics)
 async def get_portfolio_analytics(
     portfolio_id: int,

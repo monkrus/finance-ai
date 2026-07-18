@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from contextlib import asynccontextmanager
-import fastapi_limiter
+from fastapi_limiter import FastAPILimiter
 
 from app.core.config import settings
 from app.core.database import engine, Base
@@ -18,7 +18,7 @@ setup_logging()
 async def lifespan(app: FastAPI):
     # Initialize Rate Limiter
     redis_client = get_redis_client()
-    await fastapi_limiter.init(redis_client)
+    await FastAPILimiter.init(redis_client)
     
     # Start background workers
     from app.notifications.worker import run_worker_loop
@@ -32,6 +32,7 @@ async def lifespan(app: FastAPI):
     yield
     # Cleanup on shutdown
     worker_task.cancel()
+    await FastAPILimiter.close()
     await redis_client.close()
 
 app = FastAPI(
@@ -47,10 +48,11 @@ app.add_middleware(SecurityHeadersMiddleware)
 # Configure Session Middleware for OAuth
 app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
 
-# Configure CORS
+# Configure CORS (origins are env-driven so production/staging frontends work).
+cors_origins = [o.strip() for o in settings.BACKEND_CORS_ORIGINS.split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

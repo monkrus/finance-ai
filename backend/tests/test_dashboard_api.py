@@ -8,11 +8,17 @@ import uuid
 
 # Mock auth
 async def override_get_current_user():
-    user = User(email="test@example.com")
+    user = User(email="test@example.com", is_active=True, is_verified=False)
     user.id = 1
     return user
 
-app.dependency_overrides[get_current_user] = override_get_current_user
+# Scope the auth override to this module only, with teardown, so it does not
+# leak into other test modules (which previously caused order-dependent failures).
+@pytest.fixture(autouse=True)
+def _override_auth():
+    app.dependency_overrides[get_current_user] = override_get_current_user
+    yield
+    app.dependency_overrides.pop(get_current_user, None)
 
 client = TestClient(app)
 

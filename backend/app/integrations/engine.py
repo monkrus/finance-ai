@@ -158,6 +158,6 @@ class IntegrationEngine:
             try:
                 is_healthy = await provider.health()
                 healths[name] = "ok" if is_healthy else "degraded"
-            except:
+            except Exception:
                 healths[name] = "offline"
         return healths

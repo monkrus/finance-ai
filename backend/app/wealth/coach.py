@@ -6,6 +6,7 @@ from app.wealth.goals import GoalEngine
 from app.wealth.planning import WealthPlanningEngine
 from app.news.engine import NewsIntelligenceEngine
 from app.ai.gateway import AIGatewayService
+from app.ai.models import PromptTemplate
 from datetime import datetime, timezone
 import json
 
@@ -61,11 +62,21 @@ class AIFinancialCoach:
             "3. Be concise, actionable, and encouraging.\n"
             f"DATA CONTEXT:\n{json.dumps(context, indent=2)}"
         )
-        
-        response = await self.ai.chat(
-            prompt=user_query,
-            system_prompt=system_prompt,
-            model="gpt-4"
+
+        # The gateway resolves the system prompt by NAME from the PromptManager
+        # and renders it with str.format(), so the JSON context braces must be
+        # escaped or rendering would treat them as format fields.
+        prompt_name = f"wealth_coach:{user_id}"
+        self.ai.prompt_manager.register(
+            PromptTemplate(
+                name=prompt_name,
+                template=system_prompt.replace("{", "{{").replace("}", "}}"),
+                variables=[],
+            )
         )
-        
-        return response
+
+        return await self.ai.chat(
+            session_id=f"wealth-coach:{user_id}",
+            user_input=user_query,
+            system_prompt_name=prompt_name,
+        )

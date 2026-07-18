@@ -23,17 +23,30 @@ class PortfolioEngine:
         self.risk_engine = PortfolioRiskEngine()
         self.bench_engine = BenchmarkEngine()
 
-    async def get_portfolio_analytics(self, db: AsyncSession, portfolio_id: int) -> PortfolioAnalytics:
+    async def get_hydrated_holdings(self, db: AsyncSession, portfolio_id: int) -> list[Holding]:
+        """Holdings enriched with live market data (price, market value, weight, sector).
+
+        Exposes the same hydration `get_portfolio_analytics` performs, so callers
+        that need the holdings themselves do not have to recompute it.
+        """
+        hydrated, _profiles, _total = await self._hydrate(db, portfolio_id)
+        return hydrated
+
+    async def _hydrate(self, db: AsyncSession, portfolio_id: int):
+        """Load a portfolio's holdings and enrich them with market data.
+
+        Returns (hydrated_holdings, profiles, total_value).
+        """
         result = await db.execute(
             select(PortfolioModel)
             .options(selectinload(PortfolioModel.holdings))
             .filter(PortfolioModel.id == portfolio_id)
         )
         portfolio_db = result.scalars().first()
-        
+
         if not portfolio_db:
             raise FinPilotException(status_code=404, message="Portfolio not found")
-            
+
         hydrated_holdings = []
         profiles = {}
         total_value = 0.0
@@ -74,11 +87,16 @@ class PortfolioEngine:
             
         for h in hydrated_holdings:
             h.weight = (h.market_value / total_value) * 100.0 if total_value > 0 else 0.0
-            
+
+        return hydrated_holdings, profiles, total_value
+
+    async def get_portfolio_analytics(self, db: AsyncSession, portfolio_id: int) -> PortfolioAnalytics:
+        hydrated_holdings, profiles, total_value = await self._hydrate(db, portfolio_id)
+
         performance = self.perf_engine.compute(hydrated_holdings)
         allocation = self.alloc_engine.compute(hydrated_holdings, total_value)
         risk = self.risk_engine.compute(hydrated_holdings, profiles, total_value)
-        
+
         return PortfolioAnalytics(
             performance=performance,
             allocation=allocation,

@@ -64,6 +64,9 @@ class InMemoryVectorStore(VectorStoreInterface):
                 if chunk.metadata.doc_type != v: return False
             elif k == "ticker":
                 if chunk.metadata.ticker != v: return False
+            elif k == "user_id":
+                # Tenant isolation: only chunks owned by this user match.
+                if chunk.metadata.user_id != v: return False
             # Can extend to support arbitrary custom metadata matching
         return True
 

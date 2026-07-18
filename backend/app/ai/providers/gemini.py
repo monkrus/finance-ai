@@ -4,8 +4,6 @@ from typing import List, AsyncGenerator
 from google import genai
 from google.genai import types
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
-from google import genai
-from google.genai import types
 
 from app.core.config import settings
 from app.ai.models import AIMessage, AIResponse, AITool

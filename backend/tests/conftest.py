@@ -20,22 +20,40 @@ TEST_DB_URL = "sqlite+aiosqlite:///./test.db"
 test_engine = create_async_engine(TEST_DB_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=test_engine, expire_on_commit=False)
 
+
+# Rebind the application's own sessionmaker to the SQLite test engine. Tests and
+# code that use AsyncSessionLocal() directly (e.g. test_rbac_advanced, the
+# notifications worker) bypass the get_db dependency, so they would otherwise
+# connect to the real (Postgres) engine. Reconfiguring the shared sessionmaker in
+# place redirects every such caller to the test database.
+from app.core.database import AsyncSessionLocal as _AppSessionLocal
+_AppSessionLocal.configure(bind=test_engine)
+
+
+async def override_get_db():
+    """Route DB access to the SQLite test session instead of the real engine."""
+    async with TestingSessionLocal() as session:
+        yield session
+
 @pytest_asyncio.fixture(scope="session", autouse=True)
 async def setup_test_db():
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
-    
-    # We must also mock get_db to return TestingSessionLocal
-    async def override_get_db():
-        async with TestingSessionLocal() as session:
-            yield session
-            
-    from app.core.database import get_db
-    app.dependency_overrides[get_db] = override_get_db
     yield
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
+
+@pytest.fixture(autouse=True)
+def _apply_db_override():
+    # Re-assert the SQLite get_db override before every test. Some test modules
+    # call app.dependency_overrides.clear() in their teardown, which otherwise
+    # wipes this session-scoped override and lets later tests fall through to the
+    # real (Postgres) engine. Re-applying per test keeps the suite isolated and
+    # runnable without a live Postgres.
+    from app.core.database import get_db
+    app.dependency_overrides[get_db] = override_get_db
+    yield
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
 async def mock_redis():

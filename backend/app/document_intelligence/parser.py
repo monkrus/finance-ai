@@ -50,6 +50,7 @@ class DocumentParser:
             ticker=extracted_ticker,
             date=metadata.get("date") if metadata else None,
             fiscal_year=metadata.get("fiscal_year") if metadata else None,
+            user_id=metadata.get("user_id") if metadata else None,
             custom=custom_meta
         )
         

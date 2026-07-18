@@ -7,12 +7,33 @@ from app.core.database import get_db
 from app.services.auth import AuthService
 from app.models.session import DeviceSession
 from app.core.security import create_access_token
-from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse, RefreshRequest, LogoutRequest, DeviceSessionResponse
+from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse, RefreshRequest, LogoutRequest, DeviceSessionResponse, AuthUser
 from typing import List
 from app.api.deps import get_current_user
 from app.models.user import User
 
 router = APIRouter()
+
+# Backend role names -> frontend Role enum values.
+_ROLE_MAP = {"Admin": "ADMIN", "Premium User": "PREMIUM", "Standard User": "USER"}
+
+
+async def _load_auth_user(db: AsyncSession, user_id: int) -> AuthUser:
+    """Load a user (with its role eagerly, via selectin) and shape the auth payload.
+
+    Re-selecting guarantees the role relationship is loaded inside the async
+    session, avoiding lazy-load access on a possibly-expired instance.
+    """
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalars().first()
+    role_name = user.role.name if user and user.role else None
+    return AuthUser(
+        id=user.id,
+        email=user.email,
+        role=_ROLE_MAP.get(role_name, "USER"),
+        isEmailVerified=bool(user.is_verified),
+        avatarUrl=user.avatar_url,
+    )
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 async def register(request: Request, body: RegisterRequest, db: AsyncSession = Depends(get_db)):
@@ -21,7 +42,8 @@ async def register(request: Request, body: RegisterRequest, db: AsyncSession = D
     session = await AuthService.create_device_session(
         db, user.id, request.client.host, request.headers.get("user-agent", "")
     )
-    return {"access_token": access_token, "refresh_token": session.refresh_token}
+    auth_user = await _load_auth_user(db, user.id)
+    return {"access_token": access_token, "refresh_token": session.refresh_token, "user": auth_user}
 
 @router.post("/login", response_model=TokenResponse)
 async def login(request: Request, body: LoginRequest, db: AsyncSession = Depends(get_db)):
@@ -30,7 +52,8 @@ async def login(request: Request, body: LoginRequest, db: AsyncSession = Depends
     session = await AuthService.create_device_session(
         db, user.id, request.client.host, request.headers.get("user-agent", "")
     )
-    return {"access_token": access_token, "refresh_token": session.refresh_token}
+    auth_user = await _load_auth_user(db, user.id)
+    return {"access_token": access_token, "refresh_token": session.refresh_token, "user": auth_user}
 
 @router.post("/refresh", response_model=TokenResponse)
 async def refresh_token(request: Request, body: RefreshRequest, db: AsyncSession = Depends(get_db)):
@@ -45,12 +68,13 @@ async def refresh_token(request: Request, body: RefreshRequest, db: AsyncSession
     new_session = await AuthService.create_device_session(
         db, session.user_id, request.client.host, request.headers.get("user-agent", "")
     )
-    
+
     # Revoke old session
     session.is_revoked = True
     await db.commit()
-    
-    return {"access_token": access_token, "refresh_token": new_session.refresh_token}
+
+    auth_user = await _load_auth_user(db, session.user_id)
+    return {"access_token": access_token, "refresh_token": new_session.refresh_token, "user": auth_user}
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(body: LogoutRequest, db: AsyncSession = Depends(get_db)):

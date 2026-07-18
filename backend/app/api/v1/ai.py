@@ -30,16 +30,29 @@ class ChatRequest(BaseModel):
     message: str
     stream: bool = False
 
+
+def scoped_session_id(user_id: int, session_id: str) -> str:
+    """Namespace a client-supplied session id by the authenticated user.
+
+    Conversation memory is keyed by this value, so a session id can never
+    address another user's conversation history — enforcing ownership by
+    construction (the client cannot forge another user's namespace).
+    """
+    return f"user:{user_id}:{session_id}"
+
+
 @router.post("/chat")
 async def chat_endpoint(request: ChatRequest, current_user: UserProfileResponse = Depends(get_current_user)):
     """
     Generic chat endpoint using the AI Gateway.
     """
+    session_id = scoped_session_id(current_user.id, request.session_id)
+
     if request.stream:
         async def generator():
-            async for chunk in agent_router.chat_stream(request.session_id, request.message):
+            async for chunk in agent_router.chat_stream(session_id, request.message):
                 yield chunk
         return StreamingResponse(generator(), media_type="text/event-stream")
-    
-    response = await agent_router.chat(request.session_id, request.message)
+
+    response = await agent_router.chat(session_id, request.message)
     return {"response": response}

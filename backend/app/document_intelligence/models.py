@@ -8,6 +8,7 @@ class DocumentMetadata(BaseModel):
     ticker: Optional[str] = None
     date: Optional[str] = None
     fiscal_year: Optional[str] = None
+    user_id: Optional[int] = None  # Owning tenant; enforced on retrieval for isolation
     custom: Dict[str, Any] = Field(default_factory=dict)
 
 class Document(BaseModel):

@@ -40,6 +40,9 @@ services:
     ports:
       - "8000:8000"
     environment:
+      # SECRET_KEY is mandatory at startup (app exits without it). This is a
+      # LOCAL-DEV value only; provide a real secret via env/secrets in prod.
+      - SECRET_KEY=${SECRET_KEY:-local_dev_only_change_me_1a2b3c4d5e6f7081920a}
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/finpilot
       - REDIS_URL=redis://redis:6379/0
       - ENVIRONMENT=development

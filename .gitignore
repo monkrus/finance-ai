@@ -66,3 +66,16 @@ cover/
 # DB
 *.sqlite3
 test.db
+
+# Frontend (Next.js) build artifacts
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/coverage/
+frontend/*.tsbuildinfo
+
+# The Python bare-directory rules above (notably "lib/") otherwise match
+# frontend source folders named "lib". Re-include them so real source and
+# tests are tracked (e.g. frontend/lib/{utils,sanitize}.ts and the lib tests).
+!frontend/lib/
+!frontend/__tests__/lib/

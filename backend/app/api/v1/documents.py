@@ -56,7 +56,7 @@ async def upload_document(
         content=content,
         file_type=file.filename.split('.')[-1],
         source_name=file.filename,
-        metadata={"doc_type": doc_type, "ticker": ticker}
+        metadata={"doc_type": doc_type, "ticker": ticker, "user_id": current_user.id}
     )
     
     # 2. Chunk
@@ -82,12 +82,14 @@ async def query_documents(
     """
     Queries the RAG engine over processed financial documents.
     """
-    filters = {}
+    # Tenant isolation: retrieval is always scoped to the authenticated user so
+    # one user can never retrieve another user's uploaded documents.
+    filters = {"user_id": current_user.id}
     if request.ticker:
         filters["ticker"] = request.ticker
     if request.doc_type:
         filters["doc_type"] = request.doc_type
-        
+
     response = await rag_engine.query(
         query=request.query,
         top_k=request.top_k,
