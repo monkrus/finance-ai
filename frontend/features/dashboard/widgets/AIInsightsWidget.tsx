@@ -7,7 +7,6 @@ import { WidgetSkeleton } from '../components/WidgetSkeleton';
 import { WidgetError } from '../components/WidgetError';
 import { WidgetGridItem } from '../components/WidgetGrid';
 import { Sparkles, ArrowRight } from 'lucide-react';
-import { motion } from 'motion/react';
 
 export function AIInsightsWidget() {
   const { data: insights, isLoading, isError, refetch } = useAIInsights();

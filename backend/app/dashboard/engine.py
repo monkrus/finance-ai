@@ -48,9 +48,16 @@ class DashboardEngine:
         if "insights" in sections:
             tasks.append(InsightsDashboard(self.db).get_section(user_id))
             
-        # Parallel execution of all orchestrator tasks
-        # asyncio.gather will run these concurrently, reducing total latency to max(task_latency)
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        # Run sequentially: sections share the request's AsyncSession, which is not
+        # safe for concurrent coroutines (asyncio.gather triggered
+        # IllegalStateChangeError). Sections are cached (60s TTL) so latency is a
+        # non-issue. ponytail: give each section its own session to re-parallelize.
+        results = []
+        for coro in tasks:
+            try:
+                results.append(await coro)
+            except Exception as e:
+                results.append(e)
         
         response_kwargs = {}
         idx = 0

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { WidgetError } from '@/features/dashboard/components/WidgetError';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ShieldCheck, ShieldAlert, Key, Smartphone, Monitor, Clock, MoreHorizontal } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, Key, Smartphone, Monitor, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';

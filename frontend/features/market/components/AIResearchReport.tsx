@@ -6,7 +6,6 @@ import { useAIResearch } from '../api/queries';
 import { WidgetError } from '@/features/dashboard/components/WidgetError';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sparkles, TrendingUp, TrendingDown, ShieldAlert, Zap } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export function AIResearchReport({ ticker }: { ticker: string }) {
   const { data, isLoading, isError, refetch } = useAIResearch(ticker);

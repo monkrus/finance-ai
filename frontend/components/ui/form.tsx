@@ -7,6 +7,7 @@ import {
   Controller,
   FormProvider,
   useFormContext,
+  useFormState,
   type ControllerProps,
   type FieldPath,
   type FieldValues,
@@ -42,7 +43,12 @@ const FormField = <
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext)
   const itemContext = React.useContext(FormItemContext)
-  const { getFieldState, formState } = useFormContext()
+  const { getFieldState } = useFormContext()
+  // Subscribe to this field's state via useFormState so error messages actually
+  // re-render on validation changes. Reading formState off useFormContext() does
+  // not reliably track error updates in react-hook-form v7.8x, which left every
+  // form silently blocking submit with no visible validation errors.
+  const formState = useFormState({ name: fieldContext?.name })
 
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>")

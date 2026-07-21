@@ -16,7 +16,7 @@ import {
   FormDescription
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { updateProfileSchema, UpdateProfileFormData } from '../utils/validations';
 import { authApi } from '../api';
 import { useAuthStore } from '@/store/auth';

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Child pages set their own fully-branded titles (e.g. "Dashboard - FinPilot AI"),
+// Child pages set their own fully-branded titles (e.g. "Dashboard | FinPilot AI"),
 // so no title template is used here - it would double up the brand.
 export const metadata: Metadata = {
   title: "FinPilot AI",

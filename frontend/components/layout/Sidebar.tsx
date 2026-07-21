@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useUIStore } from '@/store/ui';
@@ -36,14 +36,40 @@ const secondaryItems = [
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
+const MOBILE_QUERY = '(max-width: 767px)';
+
 export function Sidebar() {
   const pathname = usePathname();
   const sidebarOpen = useUIStore((state) => state.sidebarOpen);
+  const setSidebarOpen = useUIStore((state) => state.setSidebarOpen);
+
+  // Collapse the sidebar by default on small screens (so it never covers the
+  // content) and keep it open on desktop. Re-applies when crossing the
+  // breakpoint. On desktop this is a no-op relative to the store's default.
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_QUERY);
+    const apply = () => setSidebarOpen(!mq.matches);
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, [setSidebarOpen]);
+
+  // On mobile, close the drawer after navigating so it doesn't stay over content.
+  useEffect(() => {
+    if (window.matchMedia(MOBILE_QUERY).matches) setSidebarOpen(false);
+  }, [pathname, setSidebarOpen]);
 
   if (!sidebarOpen) return null;
 
   return (
-    <aside className="w-64 border-r bg-card flex flex-col transition-all duration-300">
+    <>
+      {/* Mobile backdrop — tap to dismiss the overlay drawer. */}
+      <div
+        className="fixed inset-0 z-30 bg-black/50 md:hidden"
+        aria-hidden="true"
+        onClick={() => setSidebarOpen(false)}
+      />
+      <aside className="fixed inset-y-0 left-0 z-40 w-64 border-r bg-card flex flex-col transition-all duration-300 md:relative md:z-auto">
       <div className="h-16 flex items-center px-6 border-b">
         <span className="text-xl font-bold tracking-tight">FinPilot AI</span>
       </div>
@@ -94,5 +120,6 @@ export function Sidebar() {
         })}
       </div>
     </aside>
+    </>
   );
 }

@@ -20,9 +20,6 @@ class ValuationEngine:
     ) -> (float, float, float):
         """Returns (WACC, Cost of Equity, Cost of Debt)"""
         # CAPM: Ke = Rf + Beta * (Rm - Rf)
-        if math.isnan(beta) or math.isnan(risk_free_rate) or math.isnan(market_return):
-            print(f"NAN DETECTED IN CAPM: beta={beta}, risk_free={risk_free_rate}, market_return={market_return}")
-        
         cost_of_equity = risk_free_rate + beta * (market_return - risk_free_rate)
         
         # Kd = Interest Expense / Total Debt

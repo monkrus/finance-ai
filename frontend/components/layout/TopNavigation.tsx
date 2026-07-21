@@ -1,12 +1,36 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useUIStore } from '@/store/ui';
 import { useAuthStore } from '@/store/auth';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 import { Menu, Search, Bell, User, LogOut } from 'lucide-react';
 
+// Route → header label, mirroring the sidebar navigation labels.
+const PAGE_TITLES: Record<string, string> = {
+  '/dashboard': 'Dashboard',
+  '/portfolio': 'Portfolio',
+  '/market': 'Market',
+  '/analysis': 'Analysis',
+  '/documents': 'Documents',
+  '/news': 'News',
+  '/wealth': 'Wealth',
+  '/ai': 'AI Coach',
+  '/notifications': 'Notifications',
+  '/integrations': 'Integrations',
+  '/settings': 'Settings',
+};
+
+function getPageTitle(pathname: string | null): string {
+  const segment = pathname?.split('/').filter(Boolean)[0];
+  if (!segment) return 'Dashboard';
+  // Match on the top-level segment so sub-routes (e.g. /ai/chat/123) resolve too.
+  return PAGE_TITLES[`/${segment}`] ?? segment.charAt(0).toUpperCase() + segment.slice(1);
+}
+
 export function TopNavigation() {
+  const pathname = usePathname();
   const toggleSidebar = useUIStore((state) => state.toggleSidebar);
   const notificationsCount = useUIStore((state) => state.notificationsCount);
   const userEmail = useAuthStore((state) => state.user?.email);
@@ -46,9 +70,8 @@ export function TopNavigation() {
           <Menu className="h-5 w-5" />
         </button>
         
-        {/* Placeholder for Breadcrumbs */}
         <div className="hidden md:flex text-sm text-muted-foreground">
-          Dashboard
+          {getPageTitle(pathname)}
         </div>
       </div>
 

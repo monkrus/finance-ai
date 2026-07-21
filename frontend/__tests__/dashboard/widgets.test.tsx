@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { KPIWidget } from '@/features/dashboard/widgets/KPIWidget';
 import { PortfolioSnapshotWidget } from '@/features/dashboard/widgets/PortfolioSnapshotWidget';
 import { MarketOverviewWidget } from '@/features/dashboard/widgets/MarketOverviewWidget';

@@ -4,12 +4,11 @@ import React from 'react';
 import { useChatHistory } from '../api/queries';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Plus, MessageSquare, MoreVertical, Pin, Trash, Search } from 'lucide-react';
+import { Plus, MessageSquare, MoreVertical, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
 
 export function HistorySidebar() {
   const { data, isLoading } = useChatHistory();

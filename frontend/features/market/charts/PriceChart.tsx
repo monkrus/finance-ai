@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePriceData } from '../api/queries';
 import { WidgetError } from '@/features/dashboard/components/WidgetError';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 export function PriceChart({ ticker }: { ticker: string }) {

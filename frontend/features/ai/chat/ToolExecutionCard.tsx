@@ -1,7 +1,6 @@
 import React from 'react';
 import { ToolCall } from '../types';
 import { Loader2, CheckCircle2, AlertCircle, Wrench } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 export function ToolExecutionCard({ tool }: { tool: ToolCall }) {

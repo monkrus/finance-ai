@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePortfolioImpact } from '../api/queries';
 import { WidgetError } from '@/features/dashboard/components/WidgetError';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertTriangle, TrendingUp, ShieldAlert, Zap } from 'lucide-react';
+import { AlertTriangle, TrendingUp, ShieldAlert } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 

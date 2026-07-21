@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { HistorySidebar } from '@/features/ai/history/HistorySidebar';
 import { PromptCard } from '@/features/ai/components/PromptCard';
 import { LandingChatInput } from '@/features/ai/chat/LandingChatInput';
-import { Sparkles, Activity, Globe, Wallet, Target } from 'lucide-react';
+import { Sparkles, Activity, Globe, Wallet } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'AI Copilot | FinPilot AI',
@@ -55,7 +55,6 @@ export default function AICopilotLanding() {
 }
 
 // Separate client component for data fetching
-import { use } from 'react';
 
 function SuggestedPromptsGrid() {
   // In a real app we'd fetch this from useSuggestedPrompts, but for landing we can use static defaults if loading

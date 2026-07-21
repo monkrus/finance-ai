@@ -9,7 +9,6 @@ import { Target, Plus, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { formatDistanceToNow } from 'date-fns';
 
 export function GoalsTracker() {
   const { data, isLoading, isError, refetch } = useFinancialGoals();

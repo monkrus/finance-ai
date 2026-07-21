@@ -4,10 +4,6 @@ import {
   MarketIndex,
   MarketBreadth,
   SectorPerformance,
-  StockSearchResult,
-  CompanyProfile,
-  Quote,
-  PriceData,
   TechnicalIndicators,
   FinancialStatement,
   FinancialRatios,
@@ -17,7 +13,6 @@ import {
   PeerComparison,
   AIResearchThesis,
 } from '../types';
-import { NewsItem } from '@/features/dashboard/types';
 import {
   CompanyProfileDTO,
   StockQuoteDTO,

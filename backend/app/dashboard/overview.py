@@ -18,11 +18,10 @@ class OverviewDashboard:
         wealth_dash = WealthDashboard(self.db)
         portfolio_dash = PortfolioDashboard(self.db)
         
-        # Parallel aggregate from other dashboard components
-        w_task = wealth_dash.get_section(user_id)
-        p_task = portfolio_dash.get_section(user_id)
-        
-        w_data, p_data = await asyncio.gather(w_task, p_task)
+        # Sequential: both use the same request session, unsafe to run
+        # concurrently (see engine.py). Cached, so latency is a non-issue.
+        w_data = await wealth_dash.get_section(user_id)
+        p_data = await portfolio_dash.get_section(user_id)
         
         widgets = []
         

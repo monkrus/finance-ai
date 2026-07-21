@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { ProfileForm } from '@/features/auth/components/ProfileForm';
 
 export const metadata: Metadata = {
-  title: 'Profile Settings - FinPilot AI',
+  title: 'Profile Settings | FinPilot AI',
   description: 'Manage your profile settings',
 };
 

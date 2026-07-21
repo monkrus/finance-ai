@@ -3,7 +3,6 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, Briefcase, Globe, PieChart, Activity } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 export function PromptCard({ title, description, category }: { title: string, description: string, category: string }) {

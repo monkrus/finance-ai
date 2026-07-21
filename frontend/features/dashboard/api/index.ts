@@ -63,35 +63,41 @@ function inferFormat(widget: WidgetSchema): KPI['format'] {
   return 'number';
 }
 
+// The overview KPIs and the overview summary are both derived from the same
+// /dashboard/overview payload. Fetch it once (raw widgets) and let each hook map
+// what it needs via react-query `select`, so the endpoint is not requested twice.
+function mapOverview(widgets: WidgetSchema[]): DashboardState {
+  const netWorth = findWidget(widgets, 'Net Worth');
+  const portfolio = findWidget(widgets, 'Total Portfolio Value');
+  const health = findWidget(widgets, 'Financial Health');
+  const cash = findWidget(widgets, 'Cash Balance');
+
+  return {
+    netWorth: toNumber(netWorth?.value),
+    netWorthChange: netWorth?.change_percent ?? 0,
+    portfolioValue: toNumber(portfolio?.value),
+    portfolioChange: portfolio?.change_percent ?? 0,
+    cashBalance: toNumber(cash?.value),
+    wealthScore: toNumber(health?.value),
+  };
+}
+
+function mapKPIs(widgets: WidgetSchema[]): KPI[] {
+  return widgets.map((w) => ({
+    id: w.title,
+    label: w.title,
+    value: toNumber(w.value),
+    delta: w.change_percent ?? 0,
+    trend: toTrend(w.trend),
+    format: inferFormat(w),
+  }));
+}
+
 export const dashboardApi = {
-  getOverview: async (): Promise<DashboardState> => {
-    const widgets = await getSection('/api/v1/dashboard/overview');
-    const netWorth = findWidget(widgets, 'Net Worth');
-    const portfolio = findWidget(widgets, 'Total Portfolio Value');
-    const health = findWidget(widgets, 'Financial Health');
-    const cash = findWidget(widgets, 'Cash Balance');
-
-    return {
-      netWorth: toNumber(netWorth?.value),
-      netWorthChange: netWorth?.change_percent ?? 0,
-      portfolioValue: toNumber(portfolio?.value),
-      portfolioChange: portfolio?.change_percent ?? 0,
-      cashBalance: toNumber(cash?.value),
-      wealthScore: toNumber(health?.value),
-    };
-  },
-
-  getKPIs: async (): Promise<KPI[]> => {
-    const widgets = await getSection('/api/v1/dashboard/overview');
-    return widgets.map((w) => ({
-      id: w.title,
-      label: w.title,
-      value: toNumber(w.value),
-      delta: w.change_percent ?? 0,
-      trend: toTrend(w.trend),
-      format: inferFormat(w),
-    }));
-  },
+  // Raw overview section — shared by the overview and KPI hooks (single fetch).
+  getOverviewSection: (): Promise<WidgetSchema[]> => getSection('/api/v1/dashboard/overview'),
+  mapOverview,
+  mapKPIs,
 
   getMarketOverview: async (): Promise<MarketIndex[]> => {
     const widgets = await getSection('/api/v1/dashboard/market');

@@ -16,7 +16,6 @@ import { WidgetError } from '@/features/dashboard/components/WidgetError';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDistanceToNow } from 'date-fns';
 import { ArrowUpDown, Search, Building2, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { Account } from '../types';
 import { motion } from 'framer-motion';
 

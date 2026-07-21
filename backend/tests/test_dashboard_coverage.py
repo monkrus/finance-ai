@@ -24,7 +24,8 @@ async def test_portfolio_dashboard_exception_fallback():
         mp.side_effect = Exception("Forced error")
         res = await dash.get_section(user_id=1)
         assert len(res["widgets"]) > 0
-        assert res["widgets"][0]["value"] == 150000.0
+        # On failure the section degrades to $0 (empty state), not a fake figure.
+        assert res["widgets"][0]["value"] == 0.0
 
 @pytest.mark.asyncio
 async def test_news_dashboard_exception_fallback():

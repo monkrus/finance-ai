@@ -12,7 +12,7 @@ import { NotificationWidget } from '@/features/dashboard/widgets/NotificationWid
 import { RecentActivityWidget } from '@/features/dashboard/widgets/RecentActivityWidget';
 
 export const metadata: Metadata = {
-  title: 'Dashboard - FinPilot AI',
+  title: 'Dashboard | FinPilot AI',
   description: 'Your wealth and portfolio overview',
 };
 

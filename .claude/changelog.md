@@ -8,6 +8,20 @@ here**. Verify against code before relying on any entry (see `CLAUDE.md`).
 
 ## Present in this repository
 
+### v1.0 (RC1) — Release freeze — 2026-07-21
+FinPilot V1 frozen as a stable Release Candidate. **No features added, nothing
+redesigned.** Maintenance-only changes:
+- **Stability fix:** replaced the decorative WebGL (`three.js`) hero background — which
+  lost its GPU context and froze every authenticated page — with an equivalent
+  pure-CSS glow (`components/ui/HeroBackground.tsx`).
+- **Bug fixes:** dynamic header breadcrumb (`TopNavigation.tsx`); Settings profile
+  endpoint corrected to `/api/v1/users/me` (`features/settings/api/queries.ts`);
+  removed a dead, un-awaited `get_portfolio_news` call in `app/dashboard/news.py`.
+- **Cleanup:** removed a debug `print` in `app/analysis/valuation.py`; `.gitignore`
+  now excludes `.venv/`; added root `README.md` and replaced boilerplate frontend README.
+- **Verification:** backend 204 passed / 5 skipped · frontend 109 passed · tsc clean ·
+  ESLint 0 errors · production build succeeds.
+
 ### v1.0 RC1 — Feature-complete build (baseline)
 The repository contains the full RC1 build as originally delivered:
 

@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Paperclip, Mic, Send } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import TextareaAutosize from 'react-textarea-autosize';
 
 interface ChatInputProps {

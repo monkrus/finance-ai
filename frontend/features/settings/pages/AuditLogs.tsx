@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { useAuditLogs } from '../api/queries';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { WidgetError } from '@/features/dashboard/components/WidgetError';
 import { Skeleton } from '@/components/ui/skeleton';
-import { History, Shield, Network, User, Settings2 } from 'lucide-react';
+import { Shield, Network, User, Settings2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function AuditLogs() {

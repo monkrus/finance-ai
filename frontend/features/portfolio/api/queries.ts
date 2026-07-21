@@ -124,6 +124,22 @@ export function usePortfolioSummary() {
   const analytics = useAnalytics();
   const { data: portfolio } = usePrimaryPortfolio();
 
+  // Once analytics settles with no portfolio, return a zeroed summary (not
+  // undefined) so OverviewCards renders its $0 empty state instead of an
+  // infinite skeleton.
+  const emptySummary: PortfolioSummary = {
+    totalValue: 0,
+    dailyChange: 0,
+    dailyChangePercent: 0,
+    totalReturn: 0,
+    totalReturnPercent: 0,
+    unrealizedGain: 0,
+    realizedGain: 0,
+    beta: 0,
+    diversificationScore: 0,
+    holdingsCount: 0,
+  };
+
   return {
     ...analytics,
     data: analytics.data
@@ -143,7 +159,9 @@ export function usePortfolioSummary() {
           diversificationScore: Number(analytics.data.allocation.diversification_score.toFixed(1)),
           holdingsCount: portfolio?.holdings.length ?? 0,
         } as PortfolioSummary)
-      : undefined,
+      : analytics.isLoading
+        ? undefined
+        : emptySummary,
   };
 }
 
@@ -220,7 +238,10 @@ export function usePortfolioPerformance(range: string = '1Y') {
     },
   });
 
-  return withParentLoading(query, primary.isLoading || analytics.isLoading, id !== null);
+  const result = withParentLoading(query, primary.isLoading || analytics.isLoading, id !== null);
+  // When settled with no portfolio, expose an empty series (not undefined) so the
+  // growth chart renders an empty state rather than a perpetual skeleton.
+  return { ...result, data: result.isLoading ? result.data : (result.data ?? []) };
 }
 
 export function usePortfolioAllocation(
@@ -239,7 +260,11 @@ export function usePortfolioAllocation(
           // Backend weights are fractions (0..1); the chart displays percentages.
           value: Number((weight * 100).toFixed(2)),
         })) as AllocationData[])
-      : undefined,
+      // Settled with no portfolio -> empty allocation (not undefined) so the
+      // doughnut/heatmap render an empty state instead of a perpetual skeleton.
+      : analytics.isLoading
+        ? undefined
+        : ([] as AllocationData[]),
   };
 }
 

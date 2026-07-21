@@ -1,4 +1,3 @@
-import asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.dashboard.schemas import NewsSection
 from app.dashboard.widgets import WidgetBuilder
@@ -14,13 +13,9 @@ class NewsDashboard:
     async def get_section(self, user_id: int) -> dict:
         try:
             engine = NewsIntelligenceEngine(self.db)
-            # Parallel fetch
-            breaking_task = engine.get_recent_news(limit=3, article_type="Breaking")
-            portfolio_task = engine.get_portfolio_news(user_id=user_id, limit=5)
-            breaking, portfolio = await asyncio.gather(breaking_task, portfolio_task)
+            breaking = await engine.get_recent_news(limit=3, article_type="Breaking")
         except Exception:
             breaking = []
-            portfolio = []
 
         widgets = []
         # We just summarize counts or top headline for the widget overview

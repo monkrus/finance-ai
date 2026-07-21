@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useStockSearch } from '@/features/market/api/queries';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Search, TrendingUp, Star, Clock } from 'lucide-react';
+import { Search, TrendingUp, Star } from 'lucide-react';
 import { useDebounce } from '@/hooks/useDebounce'; // Assumes this hook exists
 import Link from 'next/link';
 import { motion } from 'framer-motion';

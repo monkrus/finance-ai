@@ -38,10 +38,10 @@ async def test_dashboard_performance_parallel_execution():
          res = await engine.get_dashboard(user_id=1, sections=["overview", "portfolio", "market"])
          elapsed = time.perf_counter() - start
          
-         # If sequential, it would take 0.1 + 0.15 + 0.05 = 0.30 seconds
-         # If parallel, it should take ~0.15 seconds
-         assert elapsed < 0.25 # well under sequential time
-         assert elapsed >= 0.15 # at least max time
+         # Sections run sequentially (they share the request's AsyncSession,
+         # which is not concurrency-safe), so total ~= sum of delays = 0.30s.
+         assert elapsed >= 0.28 # at least the sum
+         assert elapsed < 0.5   # with headroom
          
          assert res.overview is not None
          assert res.portfolio is not None

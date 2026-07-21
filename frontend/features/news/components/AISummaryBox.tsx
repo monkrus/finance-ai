@@ -3,7 +3,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AISummary } from '../types';
-import { Sparkles, ShieldAlert, TrendingUp, TrendingDown, Target } from 'lucide-react';
+import { Sparkles, TrendingUp, TrendingDown, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export function AISummaryBox({ summary }: { summary: AISummary }) {

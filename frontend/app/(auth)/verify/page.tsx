@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import { VerifyEmail } from '@/features/auth/components/VerifyEmail';
 
 export const metadata: Metadata = {
-  title: 'Verify Email - FinPilot AI',
+  title: 'Verify Email | FinPilot AI',
   description: 'Verify your FinPilot AI email address',
 };
 

@@ -4,25 +4,29 @@ import { dashboardApi } from './index';
 export const dashboardKeys = {
   all: ['dashboard'] as const,
   overview: () => [...dashboardKeys.all, 'overview'] as const,
-  kpis: () => [...dashboardKeys.all, 'kpis'] as const,
   market: () => [...dashboardKeys.all, 'market'] as const,
   news: () => [...dashboardKeys.all, 'news'] as const,
   ai: () => [...dashboardKeys.all, 'ai'] as const,
 };
 
+// Both the overview summary and the KPI row derive from the same
+// /dashboard/overview payload. They share one query key + fetcher so react-query
+// makes a single request and each hook maps its slice via `select`.
 export function useDashboardOverview() {
   return useQuery({
     queryKey: dashboardKeys.overview(),
-    queryFn: dashboardApi.getOverview,
+    queryFn: dashboardApi.getOverviewSection,
+    select: dashboardApi.mapOverview,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 
 export function useKPIs() {
   return useQuery({
-    queryKey: dashboardKeys.kpis(),
-    queryFn: dashboardApi.getKPIs,
-    staleTime: 1000 * 60 * 2,
+    queryKey: dashboardKeys.overview(),
+    queryFn: dashboardApi.getOverviewSection,
+    select: dashboardApi.mapKPIs,
+    staleTime: 1000 * 60 * 5,
   });
 }
 

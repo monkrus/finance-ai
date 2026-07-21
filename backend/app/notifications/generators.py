@@ -19,8 +19,8 @@ class AlertGenerator:
     async def run_portfolio_checks(self, user_id: int):
         """Generates alerts using Module 7 (Portfolio)"""
         try:
-            port_engine = PortfolioEngine(self.db)
-            summary = await port_engine.get_user_portfolios_summary(user_id)
+            port_engine = PortfolioEngine(market_data_service=MarketDataService())
+            summary = await port_engine.get_user_portfolios_summary(self.db, user_id)
             
             # Example: Daily loss exceeds threshold
             if summary.get("daily_change_percent", 0.0) < -5.0:

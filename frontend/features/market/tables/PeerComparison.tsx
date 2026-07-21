@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePeerComparison } from '../api/queries';
 import { WidgetError } from '@/features/dashboard/components/WidgetError';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PeerComparison as Peer } from '../types';
 
 export function PeerComparison({ ticker }: { ticker: string }) {
   const { data, isLoading, isError, refetch } = usePeerComparison(ticker);

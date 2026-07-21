@@ -6,7 +6,7 @@ export function useUserProfile() {
   return useQuery({
     queryKey: ['settings', 'profile'],
     queryFn: async () => {
-      const res = await apiClient.get<UserProfile>('/api/v1/auth/profile');
+      const res = await apiClient.get<UserProfile>('/api/v1/users/me');
       return res.data;
     },
     staleTime: 5 * 60 * 1000,
@@ -72,7 +72,7 @@ export function useUpdateProfile() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: Partial<UserProfile>) => {
-      await apiClient.put('/api/v1/auth/profile', data);
+      await apiClient.put('/api/v1/users/me', data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['settings', 'profile'] });

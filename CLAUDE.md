@@ -6,29 +6,19 @@ copilot, and a document-RAG engine — a FastAPI backend (Modules 0–12) and a
 Next.js frontend (Modules F1–F10).
 
 This file is the entry point for any Claude session. Detailed docs live in
-[`.claude/`](.claude/). **Read `.claude/context.md` and `.claude/current-sprint.md`
-first.**
+[`.claude/`](.claude/) — start with [`.claude/architecture.md`](.claude/architecture.md)
+and [`.claude/module-index.md`](.claude/module-index.md).
 
 ---
 
-## ⚠️ Read this first — repository vs. working copy
+## Status
 
-This repository (`/Users/prakashk/~:Development/finpilot`) currently contains the
-**original v1.0 RC1 "feature-complete" build**. A substantial amount of
-stabilization work — the RC1 audit remediation plus stabilization Sprints P0-1,
-P0-2, P0-3 — was performed in a **separate working copy** (the running local dev
-environment) and has **not been merged into this repository**.
+FinPilot **v1.0.0** is feature-frozen and stable: the backend and frontend test
+suites pass, TypeScript and ESLint are clean, and the production build succeeds.
+See [`.claude/changelog.md`](.claude/changelog.md) for release history and
+[`.claude/roadmap.md`](.claude/roadmap.md) for deferred/planned work.
 
-Consequences you will observe if you run *this* repo as-is:
-- Backend `Dockerfile`/CI reference a `requirements.txt` that **does not exist here**.
-- Frontend has **no `postcss.config.*`**, so Tailwind v4 does not compile (the UI
-  renders unstyled / hero invisible).
-- Dashboard widgets show **fabricated financial data** (hardcoded AAPL/MSFT/TSLA).
-- **No logout** control exists; **AI Copilot send is disconnected**.
-
-See [`.claude/changelog.md`](.claude/changelog.md) → "Completed in working copy
-(NOT merged here)" for the full list, and [`.claude/current-sprint.md`](.claude/current-sprint.md).
-When in doubt, trust the code in this repo over any doc claim, and reconcile.
+When in doubt, trust the code over any doc claim.
 
 ---
 

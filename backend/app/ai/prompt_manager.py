@@ -27,7 +27,11 @@ class PromptManager:
         self.register(
             PromptTemplate(
                 name="error_recovery",
-                template="An error occurred while fetching the required data: {error}. Please inform the user gracefully.",
+                # User-facing fallback returned when the AI provider is unavailable.
+                # Must not leak internal error details (the raw exception is logged
+                # server-side instead). Kept generic so every AI surface — Copilot,
+                # Coach, Insights, Research — degrades gracefully.
+                template="FinPilot AI is temporarily unavailable. Please try again in a moment.",
                 variables=["error"]
             )
         )

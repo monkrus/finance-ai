@@ -38,7 +38,6 @@ export function ValuationModels({ ticker }: { ticker: string }) {
 
   const isUndervalued = data.currentPrice < data.fairValueLower;
   const isOvervalued = data.currentPrice > data.fairValueUpper;
-  const isFair = !isUndervalued && !isOvervalued;
 
   return (
     <Card className="bg-card/60 backdrop-blur-lg border-white/10 shadow-lg">

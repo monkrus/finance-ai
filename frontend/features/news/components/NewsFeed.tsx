@@ -8,7 +8,7 @@ import { WidgetError } from '@/features/dashboard/components/WidgetError';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
-import { Clock, TrendingUp, TrendingDown, ArrowRight, BookmarkPlus } from 'lucide-react';
+import { Clock, BookmarkPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 

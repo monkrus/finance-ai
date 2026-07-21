@@ -33,8 +33,10 @@ async def test_chat_error_recovery():
     service.provider.generate_content = AsyncMock(side_effect=Exception("API limit"))
     
     result = await service.chat("session_error", "Hello")
-    assert "An error occurred" in result
-    assert "API limit" in result
+    # Degrades gracefully with a user-facing message and does NOT leak the raw
+    # internal error detail ("API limit") to the client.
+    assert "temporarily unavailable" in result
+    assert "API limit" not in result
 
 @pytest.mark.asyncio
 async def test_chat_tool_execution():
@@ -135,4 +137,6 @@ async def test_chat_stream_error():
         
     assert len(chunks) == 2
     assert chunks[0] == "Chunk1"
-    assert "error" in chunks[1].lower()
+    # Streaming degrades to the graceful fallback without leaking the raw error.
+    assert "temporarily unavailable" in chunks[1]
+    assert "Stream failed" not in chunks[1]

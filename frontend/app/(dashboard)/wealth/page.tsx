@@ -5,7 +5,7 @@ import { AICoachCard } from '@/features/wealth/components/AICoachCard';
 import { WealthTimeline } from '@/features/wealth/components/WealthTimeline';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Wallet, Target, CreditCard, PieChart } from 'lucide-react';
+import { Wallet, Target, CreditCard, PieChart } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Wealth Management | FinPilot AI',

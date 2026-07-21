@@ -5,7 +5,7 @@ import { useActivityTimeline } from '../api/queries';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { WidgetError } from '@/features/dashboard/components/WidgetError';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Activity, Mail, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { Activity, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';

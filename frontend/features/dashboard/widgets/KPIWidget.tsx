@@ -8,7 +8,6 @@ import { WidgetError } from '../components/WidgetError';
 import { WidgetGridItem } from '../components/WidgetGrid';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'motion/react';
 
 export function KPIWidget() {
   const { data: kpis, isLoading, isError, refetch } = useKPIs();
@@ -40,7 +39,7 @@ export function KPIWidget() {
         }
 
         return (
-          <WidgetGridItem key={kpi.id} index={index}>
+          <WidgetGridItem key={kpi.id} index={index} className="min-h-[150px]">
             <WidgetCard premium>
               <div className="flex flex-col h-full justify-between p-2">
                 <div className="text-sm font-medium text-muted-foreground">{kpi.label}</div>

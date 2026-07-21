@@ -103,13 +103,28 @@ class PortfolioEngine:
             risk=risk
         )
 
-    async def get_user_portfolios_summary(self, user_id: int) -> dict:
+    async def get_user_portfolios_summary(self, db: AsyncSession, user_id: int) -> dict:
+        """Aggregate value across all of a user's portfolios.
+
+        Reuses get_portfolio_analytics (same hydration/valuation the portfolio
+        page uses) so the dashboard total matches the portfolio total exactly.
         """
-        Aggregate summary of all portfolios for a user.
-        """
-        # Placeholder logic for testing
+        result = await db.execute(
+            select(PortfolioModel.id).filter(PortfolioModel.user_id == user_id)
+        )
+        ids = [row[0] for row in result.all()]
+
+        total_value = 0.0
+        for pid in ids:
+            analytics = await self.get_portfolio_analytics(db, pid)
+            total_value += analytics.performance.portfolio_value
+
+        # Mock/market data carries no intraday delta, so daily change is 0 until a
+        # provider supplies it. ponytail: N analytics calls; batch if a user ever
+        # holds many portfolios.
         return {
-            "total_value": 0.0,
+            "total_value": total_value,
+            "daily_change": 0.0,
             "daily_change_percent": 0.0,
-            "portfolios_count": 0
+            "portfolios_count": len(ids),
         }

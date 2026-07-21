@@ -3,7 +3,7 @@
 import React from 'react';
 import { Notification } from '../types';
 import { useMarkAsRead, useArchiveNotification } from '../api/queries';
-import { PieChart, Globe, Newspaper, Briefcase, Sparkles, Network, Circle, CheckCircle2, Archive, MoreHorizontal } from 'lucide-react';
+import { PieChart, Globe, Newspaper, Briefcase, Sparkles, Network, CheckCircle2, Archive, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';

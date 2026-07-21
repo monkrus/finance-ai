@@ -7,7 +7,7 @@ import { MarkdownRenderer } from './MarkdownRenderer';
 import { WidgetError } from '@/features/dashboard/components/WidgetError';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Sparkles, AlertCircle } from 'lucide-react';
+import { User, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ChatMessage } from '../types';
 import { ToolExecutionCard } from './ToolExecutionCard';

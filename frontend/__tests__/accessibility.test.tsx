@@ -6,7 +6,6 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { TopNavigation } from '@/components/layout/TopNavigation';
 import { Widget } from '@/components/cards/Widget';
 import { useUIStore } from '@/store/ui';
-import { usePathname } from 'next/navigation';
 
 expect.extend(toHaveNoViolations);
 
