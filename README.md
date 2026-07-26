@@ -1,7 +1,6 @@
 # FinPilot AI
 
-<!-- Replace YOUR_GITHUB_USERNAME below with your GitHub username after you create the repo. -->
-[![CI](https://github.com/YOUR_GITHUB_USERNAME/finpilot/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_GITHUB_USERNAME/finpilot/actions/workflows/ci.yml)
+[![CI](https://github.com/prakashpvtech/finpilot/actions/workflows/ci.yml/badge.svg)](https://github.com/prakashpvtech/finpilot/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **AI-powered personal finance & investment platform** — portfolio management, market
