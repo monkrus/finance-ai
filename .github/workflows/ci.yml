@@ -35,7 +35,7 @@ jobs:
           SECRET_KEY: finpilot_ci_key_0123456789abcdef0123456789ab
           DATABASE_URL: sqlite+aiosqlite:///./test.db
           REDIS_URL: redis://localhost:6379/0
-        run: pytest -q
+        run: python -m pytest -q
 
   frontend:
     name: Frontend (typecheck, test, build)
