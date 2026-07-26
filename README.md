@@ -228,6 +228,11 @@ This is a frozen v1.0 reference project, but improvements are welcome:
 
 Please do not commit secrets, `.env` files, or generated artifacts.
 
+## Acknowledgments
+
+FinPilot began as an idea from **[Muskan Rathi](https://github.com/muskanrathi22)**,
+whose vision sparked the project. Thank you for the inspiration. 💡
+
 ## License
 
 Released under the [MIT License](LICENSE). © 2026 Prakash.
