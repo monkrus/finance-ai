@@ -1,34 +1,6 @@
-# FinPilot AI
+# AI-powered personal finance & investment platform
 
-[![CI](https://github.com/prakashpvtech/finpilot/actions/workflows/ci.yml/badge.svg)](https://github.com/prakashpvtech/finpilot/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-**AI-powered personal finance & investment platform** — portfolio management, market
-research, financial-news intelligence, wealth planning, an AI copilot, and a
-document-RAG engine. Built with a **FastAPI** backend and a **Next.js** frontend.
-
-> **Version:** v1.0.0 — feature complete · **Status:** stable / maintenance mode
->
-> Designed to be **cloned and run locally**. It is not intended to be hosted as a
-> public multi-tenant service.
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Screens](#screens)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Architecture](#architecture)
-- [Prerequisites](#prerequisites)
-- [Installation & Running Locally](#installation--running-locally)
-- [Environment Variables](#environment-variables)
-- [Testing](#testing)
-- [Folder Structure](#folder-structure)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
+Portfolio management, market research, financial-news intelligence, wealth planning, an AI copilot, and a document-RAG engine. Built with a **FastAPI** backend and a **Next.js** frontend.
 
 ---
 
@@ -97,29 +69,18 @@ The frontend holds no business logic. Deeper design notes:
 
 ## Prerequisites
 
-- **Python 3.11**
+- **Python 3.11+**
 - **Node.js 20+** (Next.js 16)
 - **Redis** running locally (`redis-server`, or `brew services start redis`)
 - A database: SQLite works out of the box; PostgreSQL for production.
 
 ## Installation & Running Locally
 
-### Quick start (one command)
-
-```bash
-redis-server          # in a separate terminal, if not already running
-./start-demo.sh       # sets up venv + deps on first run, then starts both servers
-```
-
-Then open **http://localhost:3000** and create an account.
-
-### Manual setup
-
 **Backend**
 
 ```bash
 cd backend
-python3.11 -m venv .venv && source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
 cp .env.example .env          # then edit values (SECRET_KEY must be >= 32 chars)
@@ -164,75 +125,3 @@ App at http://localhost:3000.
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `NEXT_PUBLIC_API_URL` | Yes | Backend base URL (inlined at build time). |
-
-> **Never commit real `.env` files or secrets.** Only `.env.example` templates are tracked.
-
-## Testing
-
-| Command | Where | Purpose |
-|---|---|---|
-| `pytest` | `backend/` | Backend suite (Redis mocked via fakeredis) |
-| `npm test` | `frontend/` | Jest suite |
-| `npx tsc --noEmit` | `frontend/` | TypeScript typecheck |
-| `npm run lint` | `frontend/` | ESLint |
-| `npm run build` | `frontend/` | Production build |
-
-## Folder Structure
-
-```
-finpilot/
-├── backend/                FastAPI application (Python 3.11)
-│   ├── app/
-│   │   ├── api/            Route handlers
-│   │   ├── core/           Config, database, security, RBAC
-│   │   ├── models/         SQLAlchemy models
-│   │   ├── schemas/        Pydantic schemas
-│   │   ├── ai/ agents/     AI gateway + agents
-│   │   ├── analysis/ portfolio/ news/ wealth/   Domain engines
-│   │   ├── dashboard/ notifications/ integrations/
-│   │   └── db/             Seed scripts
-│   ├── alembic/           Migrations
-│   ├── tests/             pytest suite
-│   └── requirements.txt
-├── frontend/               Next.js 16 App Router app
-│   ├── app/               Routes ((auth) and (dashboard) groups)
-│   ├── features/          Feature modules F1–F10 (api/components/hooks/types)
-│   ├── components/        Shared UI + layout
-│   ├── services/          API client (axios + token refresh)
-│   ├── store/             Zustand stores
-│   └── __tests__/         Jest tests
-├── .claude/               Project documentation (architecture, module index, roadmap)
-├── docker-compose.yml
-└── start-demo.sh          Local launcher
-```
-
-## Roadmap
-
-Planned for future versions (see [`.claude/roadmap.md`](.claude/roadmap.md)):
-
-- Live AI response streaming on the frontend + persistent conversation history
-- Real market/news data in production (provider keys) and the remaining analytics endpoints
-- Persistent, shared RAG vector store (replace in-memory)
-- Real bank/broker integrations beyond mock adapters
-- Analysis & Documents workspaces wired to their engines
-- Notification delivery channels (email/push) and observability/scale hardening
-
-## Contributing
-
-This is a frozen v1.0 reference project, but improvements are welcome:
-
-1. Fork the repo and create a feature branch (`git checkout -b fix/short-description`).
-2. Make your change and keep the suites green: `pytest`, `npm test`, `npx tsc --noEmit`, `npm run lint`, `npm run build`.
-3. Follow the existing structure — the frontend stays presentation-only; business logic lives in the backend.
-4. Open a pull request describing the change and how you verified it.
-
-Please do not commit secrets, `.env` files, or generated artifacts.
-
-## Acknowledgments
-
-FinPilot began as an idea from **[Muskan Rathi](https://github.com/muskanrathi22)**,
-whose vision sparked the project. Thank you for the inspiration. 💡
-
-## License
-
-Released under the [MIT License](LICENSE). © 2026 Prakash.
