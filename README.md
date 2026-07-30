@@ -61,9 +61,6 @@ The app ships these primary views (explore them by running locally and signing u
                                                     └────────────┘
 ```
 
-The frontend holds no business logic. Deeper design notes:
-[`.claude/architecture.md`](.claude/architecture.md).
-
 ## Prerequisites
 
 - **Python 3.11+**
