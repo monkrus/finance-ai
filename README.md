@@ -38,8 +38,6 @@ The app ships these primary views (explore them by running locally and signing u
 | **Settings** | Profile, security, notifications, integrations, API keys, appearance. |
 | **Notifications** | In-app center with preferences and a background worker. |
 
-Full module map: [`.claude/module-index.md`](.claude/module-index.md).
-
 ## Tech Stack
 
 - **Backend:** FastAPI (Python 3.11), SQLAlchemy 2 (async), Alembic, Redis, Pydantic v2, python-jose, Argon2, Google GenAI.
