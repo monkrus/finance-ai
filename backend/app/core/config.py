@@ -1,6 +1,9 @@
 import os
 import sys
 from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def get_mandatory_secret_key() -> str:
     secret = os.getenv("SECRET_KEY")
