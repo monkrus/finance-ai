@@ -43,7 +43,6 @@ The app ships these primary views (explore them by running locally and signing u
 - **Backend:** FastAPI (Python 3.11), SQLAlchemy 2 (async), Alembic, Redis, Pydantic v2, python-jose, Argon2, Google GenAI.
 - **Frontend:** Next.js 16 (App Router, React 19, TypeScript), TanStack Query, Zustand, Tailwind CSS v4, ECharts, Framer Motion.
 - **Data:** PostgreSQL (production) or SQLite (local). Redis required (rate limiting, brute-force guard, AI memory).
-- **Tooling:** pytest, Jest, ESLint, Docker / docker-compose, GitHub Actions CI.
 
 ## Architecture
 
