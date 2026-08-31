@@ -80,6 +80,7 @@ from app.api.v1.wealth import router as wealth_router
 from app.api.v1.dashboard import router as dashboard_router
 from app.api.v1.notifications import router as notifications_router
 from app.api.v1.integrations import router as integrations_router
+from app.api.v1.agents import router as agents_router
 
 api_prefix = settings.API_V1_STR
 app.include_router(system_router, tags=["system"])
@@ -96,3 +97,9 @@ app.include_router(wealth_router, prefix=f"{api_prefix}/wealth", tags=["wealth"]
 app.include_router(dashboard_router, prefix=f"{api_prefix}", tags=["dashboard"])
 app.include_router(notifications_router, prefix=f"{api_prefix}/notifications", tags=["notifications"])
 app.include_router(integrations_router, prefix=f"{api_prefix}/integrations", tags=["integrations"])
+# Agents are mounted under the versioned prefix like every other router. The
+# unversioned path is also registered because the API contract specifies
+# `POST /agents/investment-strategy` literally; it is an alias, not a second
+# implementation, and should be dropped once clients move to the v1 path.
+app.include_router(agents_router, prefix=f"{api_prefix}/agents", tags=["agents"])
+app.include_router(agents_router, prefix="/agents", tags=["agents"], include_in_schema=False)
