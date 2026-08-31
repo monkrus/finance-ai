@@ -117,6 +117,42 @@ class GeminiProvider(AIProviderInterface):
             logger.error(f"Gemini API Error: {str(e)}")
             raise FinPilotException(message=f"Gemini API Error: {str(e)}", status_code=500)
 
+    async def generate_structured(
+        self,
+        prompt: str,
+        temperature: float = 0.2,
+        max_tokens: int = 4096,
+    ) -> AIResponse:
+        """Single-turn generation constrained to a JSON response.
+
+        Exposed as a first-class provider capability so callers stop reaching
+        into `_execute_generate` (a private method) to get JSON out of the
+        model — that pattern bypasses the gateway's metrics and error handling.
+        """
+        config = types.GenerateContentConfig(
+            temperature=temperature,
+            max_output_tokens=max_tokens,
+            response_mime_type="application/json",
+        )
+
+        try:
+            response = await asyncio.wait_for(
+                self._execute_generate(contents=[prompt], config=config),
+                timeout=60.0,
+            )
+            return AIResponse(
+                content=response.text or "",
+                tokens_used=response.usage_metadata.total_token_count
+                if response.usage_metadata
+                else 0,
+                raw_response=response,
+            )
+        except Exception as e:
+            logger.error(f"Gemini structured generation error: {str(e)}")
+            raise FinPilotException(
+                message=f"Gemini API Error: {str(e)}", status_code=500
+            )
+
     async def generate_stream(
         self,
         messages: List[AIMessage],

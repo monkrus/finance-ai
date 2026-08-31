@@ -99,6 +99,55 @@ class AIGatewayService:
             error_msg = self.prompt_manager.render("error_recovery", error=str(e))
             return error_msg
             
+    async def generate_json(
+        self,
+        prompt_name: str,
+        temperature: float = 0.2,
+        max_tokens: int = 4096,
+        prompt_version: str = None,
+        **prompt_vars,
+    ) -> Dict[str, Any]:
+        """Render a registered prompt and return the model's parsed JSON object.
+
+        Structured, single-turn generation goes through the gateway for the same
+        reason chat does: prompt rendering, metrics and error translation should
+        live in exactly one place. Callers get a dict or a FinPilotException —
+        never half-parsed text.
+        """
+        import json
+
+        start_time = time.time()
+        prompt = self.prompt_manager.render(prompt_name, version=prompt_version, **prompt_vars)
+
+        response = await self.provider.generate_structured(
+            prompt=prompt, temperature=temperature, max_tokens=max_tokens
+        )
+
+        latency = (time.time() - start_time) * 1000
+        self.metrics.track(self.provider.default_model, response.tokens_used, latency)
+
+        raw = (response.content or "").strip()
+        if raw.startswith("```"):
+            # Defensive: some models wrap JSON in fences despite the mime type.
+            raw = raw.strip("`")
+            raw = raw[raw.find("{") :] if "{" in raw else raw
+
+        try:
+            parsed = json.loads(raw)
+        except (json.JSONDecodeError, ValueError) as e:
+            logger.error("Structured generation returned non-JSON for '%s': %s", prompt_name, e)
+            raise FinPilotException(
+                message="The AI response could not be parsed. Please retry.",
+                status_code=502,
+            )
+
+        if not isinstance(parsed, dict):
+            raise FinPilotException(
+                message="The AI response had an unexpected shape. Please retry.",
+                status_code=502,
+            )
+        return parsed
+
     async def chat_stream(self, session_id: str, user_input: str, system_prompt_name: str = "system_base", allowed_tools: List[str] = None) -> AsyncGenerator[str, None]:
         safe_input = self.safety_filter.validate_input(user_input)
         

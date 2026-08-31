@@ -32,3 +32,20 @@ class AIProviderInterface(ABC):
         Generate a streaming response from the AI model.
         """
         pass
+
+    async def generate_structured(
+        self,
+        prompt: str,
+        temperature: float = 0.2,
+        max_tokens: int = 4096,
+    ) -> AIResponse:
+        """
+        Generate a single-turn response constrained to JSON.
+
+        Not abstract: providers without native structured-output support can
+        inherit this and fail loudly rather than silently returning prose that
+        downstream JSON parsing would choke on.
+        """
+        raise NotImplementedError(
+            f"{type(self).__name__} does not implement structured generation."
+        )
