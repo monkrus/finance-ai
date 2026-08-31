@@ -119,3 +119,73 @@ App at http://localhost:3000.
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `NEXT_PUBLIC_API_URL` | Yes | Backend base URL (inlined at build time). |
+
+---
+
+## Investment Strategy Agent
+
+A specialized agent for long-term investment planning. It reviews a portfolio,
+discusses asset allocation and diversification, explains risk, and frames a
+multi-year plan — grounded in retrieved context rather than generated from the
+model's priors.
+
+### Endpoint
+
+```
+POST /api/v1/agents/investment-strategy
+Authorization: Bearer <access token>
+```
+
+The unversioned path `POST /agents/investment-strategy` is registered as an
+alias to the same handler.
+
+```jsonc
+// request
+{
+  "portfolio_id": 1,
+  "profile": {
+    "risk_tolerance": "moderate",      // conservative | moderate | aggressive
+    "time_horizon_years": 20,
+    "experience_level": "beginner",    // beginner | intermediate | advanced
+    "goals": ["retire at 60"],
+    "constraints": ["no tobacco"]
+  },
+  "question": "Am I too concentrated in tech?",  // optional
+  "include_documents": true,
+  "max_holdings": 8
+}
+```
+
+The response separates retrieved fact from model interpretation. Each section
+carries `grounded_findings` (statements with `refs` into the retrieved context)
+and `generated_insights` (interpretation, explicitly not retrieved fact), plus
+top-level `assumptions`, `data_gaps`, `sources`, `confidence` and `validation`.
+
+### Grounding
+
+Context is assembled deterministically from the existing services — portfolio
+analytics and holdings, company profiles and ratios, market news, and the user's
+uploaded filings via RAG — with each source addressable as `PORTFOLIO-1`,
+`COMPANY-2`, `NEWS-1`, `DOCS-1`, `PROFILE-1`.
+
+After generation the server validates the answer against that context: findings
+whose citations do not resolve are dropped, partially valid citations are
+narrowed to the refs that hold up, and the model's self-reported `confidence` is
+treated as a ceiling candidate rather than a result. A failing data source
+becomes a visible entry in `data_gaps` instead of a silent hole or a 500.
+
+Portfolio ownership is verified against the authenticated user before any
+holding is read, and document retrieval is always scoped to the caller.
+
+### Tests
+
+```bash
+cd backend && python -m pytest
+```
+
+### Assessment write-ups
+
+- [`docs/01-architecture-review.md`](docs/01-architecture-review.md) — architecture review
+- [`docs/02-implementation-notes.md`](docs/02-implementation-notes.md) — design decisions and prompt engineering strategy
+- [`docs/03-rag-review.md`](docs/03-rag-review.md) — RAG review
+- [`docs/04-git-challenges.md`](docs/04-git-challenges.md) — Git challenge walkthrough
