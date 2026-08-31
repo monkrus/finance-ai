@@ -10,6 +10,7 @@ from app.agents.specialized.news_analysis import NewsAnalysisAgent
 from app.agents.specialized.portfolio_advisor import PortfolioAdvisorAgent
 from app.agents.specialized.finance_tutor import FinanceTutorAgent
 from app.agents.specialized.research_assistant import ResearchAssistantAgent
+from app.agents.specialized.investment_strategy import InvestmentStrategyAgent
 from app.ai.models import AIMessage
 
 logger = logging.getLogger(__name__)
@@ -25,7 +26,8 @@ class AgentRouter:
             "NEWS_ANALYSIS": NewsAnalysisAgent(gateway),
             "PORTFOLIO_ADVISOR": PortfolioAdvisorAgent(gateway),
             "FINANCE_TUTOR": FinanceTutorAgent(gateway),
-            "RESEARCH_ASSISTANT": ResearchAssistantAgent(gateway)
+            "RESEARCH_ASSISTANT": ResearchAssistantAgent(gateway),
+            "INVESTMENT_STRATEGY": InvestmentStrategyAgent(gateway)
         }
         
     async def _detect_intent(self, user_input: str) -> str:
