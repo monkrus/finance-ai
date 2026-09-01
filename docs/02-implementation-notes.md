@@ -30,6 +30,11 @@ Free-form chat is the wrong shape for this deliverable. A strategy review has
 five required sections, must separate fact from inference, and must be
 checkable. That needs a typed contract, not a paragraph.
 
+> **Plain-language example:** The agent can both have a casual conversation
+> ("tell me about my portfolio") and produce a formal structured report with
+> verified citations. Same brain, two modes — one for chatting, one for
+> delivering something you can act on.
+
 ### Context assembly is LLM-free and calls existing services
 
 `InvestmentContextBuilder` calls `PortfolioEngine`, `MarketDataService` and
@@ -50,6 +55,12 @@ entry in `context.gaps`, which flows into the response's `data_gaps` and caps
 confidence. A market-data outage degrades the answer visibly instead of
 returning a 500 or, worse, a confident answer with a silent hole in it.
 
+> **Plain-language example:** Instead of hoping the AI remembers to look up your
+> portfolio, the system always fetches it automatically — like a doctor's
+> assistant who always pulls your chart before the appointment. If the market
+> data feed is down, the report says "market data was unavailable" rather than
+> crashing or quietly making things up.
+
 ### Ownership is checked before any data is read
 
 `assert_portfolio_owned_by` filters on `user_id` from the JWT and returns 404 —
@@ -62,6 +73,11 @@ This is the shape the existing portfolio *tools* are missing; see issue #1 in
 [01-architecture-review.md](01-architecture-review.md). I fixed the new path
 rather than refactoring sixteen callbacks here, because the registry signature
 change is a wider piece of work that deserves its own review.
+
+> **Plain-language example:** If you request portfolio 42 and it is not yours,
+> you get "not found" — not "access denied." Saying "access denied" would
+> confirm that portfolio 42 exists and belongs to someone, which is itself
+> information leakage.
 
 ### Investment profile: typed request input, behind a seam
 
@@ -151,6 +167,11 @@ the citations it produced and that inflating it makes the answer look worse. Thi
 aligns the incentive rather than relying on instruction — and the claim is true,
 which is the next section.
 
+> **Plain-language example:** The prompt tells the AI: "if you don't have the
+> data, say so — a gap is a useful answer, a guess is not. And don't inflate
+> your confidence score, because the server will check your citations and cap
+> it if you're bluffing."
+
 ### Scope constraints
 
 No buy/sell instructions on individual securities; changes framed as options with
@@ -188,6 +209,13 @@ runs server-side on every response:
 The tests cover each of these cases directly (`TestGroundingValidation`),
 including that an empty model response degrades to a safe zero-confidence answer
 rather than raising.
+
+> **Plain-language example:** The AI writes "your portfolio is 71% tech
+> [source: PORTFOLIO-1, source: MADE-UP-3]." The server checks: PORTFOLIO-1
+> exists, MADE-UP-3 does not. It keeps the statement but removes the fake
+> citation. If *both* citations were fake, the entire statement would be
+> silently dropped from the report — like a journal editor pulling any claim
+> with a fabricated footnote.
 
 ---
 

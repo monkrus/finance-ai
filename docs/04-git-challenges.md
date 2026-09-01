@@ -18,6 +18,11 @@ feature/payment fdd0878 update readme            ← no payment commit
 
 Note `fix typo error 5` is missing from the branch tip — that is Challenge 1.
 
+> **In plain terms:** The repo has three problems baked in. A commit was
+> "deleted" (Challenge 1), the history is cluttered with junk commits
+> (Challenge 2), and a payment feature landed on the wrong branch (Challenge 3).
+> Each requires a different Git technique to fix.
+
 ---
 
 ## Challenge 1 — Lost commit
@@ -38,7 +43,14 @@ git reflog
 ```
 
 `HEAD@{2}` is the value `HEAD` held immediately before the reset — `100f978`,
-`fix typo error 5`. Confirmed before touching anything:
+`fix typo error 5`.
+
+> **In plain terms:** Git's reflog is like a browser history for your branch
+> pointer — even after "deleting" a commit with `reset --hard`, Git still
+> remembers where HEAD used to point. The commit is not gone, just unreferenced.
+> We look it up in the history and point the branch back at it.
+
+Confirmed before touching anything:
 
 ```bash
 git show -s --format="%h %s" 100f978
@@ -78,6 +90,11 @@ that all belong on the branch.
 
 The commit needs to move, not be copied: land on `feature/payment`, disappear
 from `git-assessment`.
+
+> **In plain terms:** A letter ended up in the wrong mailbox. We photocopy it
+> into the right mailbox (`cherry-pick`), then remove the original from the
+> wrong one (`rebase --onto`). The result: the payment feature exists only on
+> `feature/payment`, where it belongs.
 
 **Step 1 — copy it onto the correct branch:**
 
@@ -140,6 +157,12 @@ The six remaining commits:
 543dd03 fix typo error 4    — removes line 4
 e0e6e1d fix typo error 5    — removes line 5
 ```
+
+> **In plain terms:** Six commits look like work — "typo error" then five
+> "fix typo error" commits. But reading the actual diffs reveals they cancel
+> each other out completely: one adds junk, five remove it. The file ends up
+> identical to where it started. The honest cleanup is to drop them all, not
+> to squash them into a tidy lie.
 
 Inspecting the diffs first rather than squashing blind is the whole job here.
 `1fa3e01` appends five lines to the end of `README.md`; the five "fix" commits

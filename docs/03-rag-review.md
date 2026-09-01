@@ -28,6 +28,11 @@ lost on restart. This is not a scaling concern for later; it is a correctness
 bug now, and it is silent — the user gets "Information not found in the provided
 documents" for a document they successfully uploaded thirty seconds ago.
 
+> **Plain-language example:** Imagine a library where each librarian keeps their
+> own card catalogue in their head. You hand a book to Librarian A. Your next
+> visit you happen to get Librarian B, who has never heard of it. "We don't
+> have that book." Restart the server and all librarians forget everything.
+
 **2. `keyword_search` is not BM25.** It is unweighted set intersection over
 whitespace-split tokens, scored as `overlap / len(query_terms)`:
 
@@ -43,6 +48,11 @@ words carry the same weight as "EBITDA." The lexical arm of the hybrid — the a
 that is supposed to catch exact ticker symbols, line-item names and defined
 terms that embeddings blur — is the weakest part of the system.
 
+> **Plain-language example:** You search for "revenue." A chunk mentioning
+> "revenue" forty times scores identically to one mentioning it once. The word
+> "EBITDA" carries the same weight as "the." It is keyword matching without any
+> sense of importance.
+
 **3. Embedding failures poison the index silently.** `GeminiEmbedder.embed_text`
 catches every exception and returns `[0.0] * 768`. A zero vector has zero cosine
 similarity with everything, so the chunk is stored, reported as successfully
@@ -50,6 +60,11 @@ indexed, and is permanently unretrievable. The upload endpoint returns
 `chunks_stored: N` with no indication that some fraction are dead. A batch
 transient error during a large filing upload produces a document that looks
 indexed and is not.
+
+> **Plain-language example:** A chunk fails to embed due to a network glitch.
+> Instead of reporting the failure, the system stores a blank vector — a book
+> with a blank spine on the shelf. It is there, but no search will ever find it,
+> and the upload report says "success."
 
 **4. `embed_batch` is a sequential loop.** One API round trip per chunk, with a
 comment acknowledging the API supports batching. A 300-chunk 10-K is 300
@@ -150,6 +165,10 @@ filings. Four problems:
   the pipeline: the numbers are the point, and after chunking they are
   unattributable. `DocumentParser` already detects `has_tables` and then does
   nothing with it.
+  > **Plain-language example:** A balance sheet with "Revenue: $5.2B | COGS:
+  > $3.1B" gets flattened into "5.2B 3.1B" — the numbers survive but their
+  > labels disappear. The AI retrieves the chunk and has no idea which number
+  > is which.
 - **`page_number=1` is hardcoded** with a `# Mock page number` comment, so
   citations cannot point a user at a page. For a filing, a citation you cannot
   follow is barely a citation.
@@ -212,6 +231,12 @@ affordable relative to the generation call it improves. Use a hosted reranker
 first, self-host if volume justifies it, and measure both against no reranking
 before committing.
 
+> **Plain-language example:** Retrieval is like a hiring process. The initial
+> search casts a wide net and pulls 50 resumes (cheap, fast). Then a senior
+> interviewer carefully re-reads those 50 and picks the best 5–8 (expensive,
+> precise). Without that second pass, you are generating answers from whatever
+> happened to float to the top.
+
 ---
 
 ## Hallucination Reduction
@@ -248,6 +273,12 @@ every citation, discarding the retrieval score that would let a client rank or
 threshold; and a dropped citation is silent — the *statement* it supported stays
 in the answer, so a hallucinated citation produces an uncited claim rather than
 a removed one.
+
+> **Plain-language example:** The AI says "revenue grew 15% [source: chunk-42]."
+> The system checks: chunk-42 exists, so the citation passes. But chunk-42
+> actually says revenue grew 5% — the citation is real but the claim is wrong.
+> Citation resolution alone cannot catch this; you also need to verify that the
+> cited source actually supports the statement.
 
 **This is the specific thing I implemented differently in Task 2.** In
 `InvestmentStrategyAgent.validate_against_context`, citations are attached to
