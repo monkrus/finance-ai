@@ -97,6 +97,34 @@ class TestContextAssembly:
         assert rag.calls, "expected document retrieval to run"
         assert all(filters.get("user_id") == 42 for _q, filters in rag.calls)
 
+    async def test_context_refs_are_unique_even_when_sources_partially_fail(
+        self, profile, owned_portfolio, analytics, holdings
+    ):
+        """Regression: two tickers whose profiles fail but whose ratios succeed
+        must not share a RESEARCH ref — a duplicate ref makes citations
+        ambiguous between different tickers' data."""
+        md = FakeMarketDataService(
+            profiles={},  # every profile lookup fails
+            ratios={
+                "AAPL": [FakeModel(pe_ratio=31.2)],
+                "XOM": [FakeModel(pe_ratio=11.8)],
+            },
+        )
+        builder = InvestmentContextBuilder(
+            FakePortfolioEngine(analytics=analytics, holdings=holdings), md, None
+        )
+        ctx = await builder.build(
+            db=FakeSession(owned_portfolio),
+            portfolio_id=1,
+            user_id=42,
+            profile=profile,
+            include_documents=False,
+        )
+        refs = [b.ref for b in ctx.blocks]
+        assert len(refs) == len(set(refs)), f"duplicate refs: {refs}"
+        research_refs = sorted(b.ref for b in ctx.blocks if b.kind == "research")
+        assert research_refs == ["RESEARCH-1", "RESEARCH-2"]
+
     async def test_failing_source_becomes_a_recorded_gap(
         self, profile, owned_portfolio, holdings
     ):

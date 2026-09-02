@@ -191,7 +191,8 @@ class InvestmentContextBuilder:
 
         results = await asyncio.gather(*(one(t) for t in tickers), return_exceptions=True)
 
-        blocks, gaps, idx = [], [], 0
+        blocks, gaps = [], []
+        company_idx, research_idx = 0, 0
         for result in results:
             if isinstance(result, Exception):
                 gaps.append("Company research failed for one or more holdings.")
@@ -201,10 +202,10 @@ class InvestmentContextBuilder:
             if isinstance(profile, Exception) or not profile:
                 gaps.append(f"No company profile available for {ticker}.")
             else:
-                idx += 1
+                company_idx += 1
                 blocks.append(
                     ContextBlock(
-                        ref=f"COMPANY-{idx}",
+                        ref=f"COMPANY-{company_idx}",
                         kind="company",
                         label=f"Company profile — {ticker}",
                         content=profile.model_dump(),
@@ -215,9 +216,10 @@ class InvestmentContextBuilder:
             if isinstance(ratios, Exception) or not ratios:
                 gaps.append(f"No financial ratios available for {ticker}.")
             else:
+                research_idx += 1
                 blocks.append(
                     ContextBlock(
-                        ref=f"RESEARCH-{idx or 1}",
+                        ref=f"RESEARCH-{research_idx}",
                         kind="research",
                         label=f"Financial ratios — {ticker}",
                         content=[r.model_dump() for r in ratios],
