@@ -6,6 +6,13 @@ Portfolio management, market research, financial-news intelligence, wealth plann
 
 ## Assessment Summary
 
+> **Reviewers:** please switch to the **`git-assessment`** branch to see the
+> completed work. All four tasks live there.
+>
+> ```bash
+> git checkout git-assessment
+> ```
+
 This repo contains a completed AI Engineer technical assessment. All work lives
 on the **`git-assessment`** branch (the default). Here is what was done and where
 to find it.
