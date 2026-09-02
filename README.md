@@ -4,6 +4,47 @@ Portfolio management, market research, financial-news intelligence, wealth plann
 
 ---
 
+## Assessment Summary
+
+This repo contains a completed AI Engineer technical assessment. All work lives
+on the **`git-assessment`** branch (the default). Here is what was done and where
+to find it.
+
+### What was built
+
+| Task | What | Where |
+|------|------|-------|
+| **Task 1 — Architecture Review** | Ten architectural improvements, prioritised by production urgency. Covers authorization (IDOR), prompt versioning, evaluation, model routing, observability, memory, caching, guardrails, composition, and orchestration. Each includes the current limitation, a proposed fix, expected benefits, and trade-offs. | [`docs/01-architecture-review.md`](docs/01-architecture-review.md) |
+| **Task 2 — Investment Strategy Agent** | A new agent that reviews a portfolio, builds an investment strategy, and grounds every claim in retrieved context. Includes schemas, context assembly, structured generation, post-hoc grounding validation, an API endpoint, and 19 tests. | Code: `backend/app/agents/`, `backend/app/api/v1/agents.py`, `backend/app/schemas/investment_strategy.py` · Design notes: [`docs/02-implementation-notes.md`](docs/02-implementation-notes.md) |
+| **Task 3 — RAG Review** | Review of the existing retrieval pipeline. Identifies concrete defects (in-memory vector store, broken keyword search, silent embedding failures, destroyed tables) and proposes a replacement architecture with reranking, BM25, and a three-tier evaluation plan. | [`docs/03-rag-review.md`](docs/03-rag-review.md) |
+| **Task 4 — Git Challenges** | Recovered a lost commit (reflog), moved a misplaced payment commit to `feature/payment` (cherry-pick + rebase), and cleaned up six self-cancelling typo commits (interactive rebase → empty → dropped). | [`docs/04-git-challenges.md`](docs/04-git-challenges.md) |
+
+### How to verify
+
+```bash
+# Run the test suite (no infrastructure needed — uses mocks)
+cd backend && python -m pytest
+
+# Check the commit history
+git log --oneline
+
+# Confirm the payment branch exists
+git log --oneline feature/payment -2
+
+# See all files changed vs the original
+git diff --stat main git-assessment
+```
+
+### Branch layout
+
+| Branch | Purpose |
+|--------|---------|
+| `git-assessment` (default) | All assessment work — 9 commits over the cleaned base |
+| `feature/payment` | Payment commit relocated here (Git Challenge 3) |
+| `main` | Original upstream code, untouched |
+
+---
+
 ## Overview
 
 FinPilot AI is a full-stack reference implementation of a modern wealth-management
